@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Location">
+    <Key>
+      <PropertyRef Name="LocationID" />
+    </Key>
+    <Property Name="LocationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="LocationName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Address" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="State" Type="String" MaxLength="2" FixedLength="true" Unicode="false" Nullable="false" />
+    <Property Name="ZipCode" Type="String" MaxLength="5" FixedLength="true" Unicode="false" Nullable="false" />
+    <Property Name="ReservationMax" Type="Byte" Nullable="false" />
+    <NavigationProperty Name="Reservations" Relationship="Self.FK_Reservations_Locations" FromRole="Locations" ToRole="Reservations" />
+  </EntityType>
+  <EntityType Name="OwnerAssest">
+    <Key>
+      <PropertyRef Name="OwnerAssetID" />
+    </Key>
+    <Property Name="OwnerAssetID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="AssetName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="OwnerID" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="AssetPhoto" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Notes" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
+    <Property Name="IsActive" Type="Boolean" Nullable="false" />
+    <Property Name="DateAdded" Type="DateTime" Nullable="false" Precision="0" />
+    <NavigationProperty Name="Reservations" Relationship="Self.FK_Reservations_OwnerAssests" FromRole="OwnerAssests" ToRole="Reservations" />
+    <NavigationProperty Name="UserDetail" Relationship="Model.FK_OwnerAssests_UserDetails" FromRole="OwnerAssest" ToRole="UserDetail" />
+  </EntityType>
+  <EntityType Name="Reservation">
+    <Key>
+      <PropertyRef Name="ReservationID" />
+    </Key>
+    <Property Name="ReservationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="OwnerAssetID" Type="Int32" Nullable="false" />
+    <Property Name="LocationID" Type="Int32" Nullable="false" />
+    <Property Name="ReservationDate" Type="DateTime" Nullable="false" Precision="0" />
+    <NavigationProperty Name="Location" Relationship="Self.FK_Reservations_Locations" FromRole="Reservations" ToRole="Locations" />
+    <NavigationProperty Name="OwnerAssest" Relationship="Self.FK_Reservations_OwnerAssests" FromRole="Reservations" ToRole="OwnerAssests" />
+  </EntityType>
+  <Association Name="FK_Reservations_Locations">
+    <End Role="Locations" Type="Self.Location" Multiplicity="1" />
+    <End Role="Reservations" Type="Self.Reservation" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Locations">
+        <PropertyRef Name="LocationID" />
+      </Principal>
+      <Dependent Role="Reservations">
+        <PropertyRef Name="LocationID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Reservations_OwnerAssests">
+    <End Role="OwnerAssests" Type="Self.OwnerAssest" Multiplicity="1" />
+    <End Role="Reservations" Type="Self.Reservation" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="OwnerAssests">
+        <PropertyRef Name="OwnerAssetID" />
+      </Principal>
+      <Dependent Role="Reservations">
+        <PropertyRef Name="OwnerAssetID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="Reservation_SystemEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Locations" EntityType="Self.Location" />
+    <EntitySet Name="OwnerAssests" EntityType="Self.OwnerAssest" />
+    <EntitySet Name="Reservations" EntityType="Self.Reservation" />
+    <AssociationSet Name="FK_Reservations_Locations" Association="Self.FK_Reservations_Locations">
+      <End Role="Locations" EntitySet="Locations" />
+      <End Role="Reservations" EntitySet="Reservations" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Reservations_OwnerAssests" Association="Self.FK_Reservations_OwnerAssests">
+      <End Role="OwnerAssests" EntitySet="OwnerAssests" />
+      <End Role="Reservations" EntitySet="Reservations" />
+    </AssociationSet>
+    <EntitySet Name="UserDetails" EntityType="Model.UserDetail" />
+    <AssociationSet Name="FK_OwnerAssests_UserDetails" Association="Model.FK_OwnerAssests_UserDetails">
+      <End Role="UserDetail" EntitySet="UserDetails" />
+      <End Role="OwnerAssest" EntitySet="OwnerAssests" />
+    </AssociationSet>
+  </EntityContainer>
+  <ComplexType Name="ComplexType1">
+    <Property Type="Int32" Name="FirstName" Nullable="false" />
+  </ComplexType>
+  <EntityType Name="UserDetail">
+    <Key>
+      <PropertyRef Name="UserID" />
+    </Key>
+    <Property Name="UserID" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="FirstName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="LastName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="OwnerAssests" Relationship="Model.FK_OwnerAssests_UserDetails" FromRole="UserDetail" ToRole="OwnerAssest" />
+  </EntityType>
+  <Association Name="FK_OwnerAssests_UserDetails">
+    <End Type="Model.UserDetail" Role="UserDetail" Multiplicity="1" />
+    <End Type="Model.OwnerAssest" Role="OwnerAssest" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="UserDetail">
+        <PropertyRef Name="UserID" />
+      </Principal>
+      <Dependent Role="OwnerAssest">
+        <PropertyRef Name="OwnerID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
