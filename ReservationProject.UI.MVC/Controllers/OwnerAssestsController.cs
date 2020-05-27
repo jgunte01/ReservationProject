@@ -8,22 +8,29 @@ using System.Web;
 using System.Web.Mvc;
 using ReservationProject.DATA.EF;
 using System.IO;
+using Microsoft.AspNet.Identity;
 
 namespace ReservationProject.UI.MVC.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Customer,Employee")]
     public class OwnerAssestsController : Controller
     {
         private Reservation_SystemEntities db = new Reservation_SystemEntities();
 
         // GET: OwnerAssests
+       
         public ActionResult Index()
         {
+            string loggedUser = User.Identity.GetUserId();
+
+            var ownerPet = db.OwnerAssests.Where(r => r.AssetName == loggedUser);
+
             var ownerAssests = db.OwnerAssests.Include(o => o.UserDetail);
             return View(ownerAssests.ToList());
         }
 
         // GET: OwnerAssests/Details/5
+        [Authorize(Roles = "Admin,Customer,Employee")]
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -40,6 +47,7 @@ namespace ReservationProject.UI.MVC.Controllers
         }
 
         // GET: OwnerAssests/Create
+        [Authorize(Roles = "Customer")]
         public ActionResult Create()
         {
             
@@ -77,7 +85,7 @@ namespace ReservationProject.UI.MVC.Controllers
 
                 }
                 ownerAssest.AssetPhoto = imageName;
-
+                ownerAssest.OwnerID = User.Identity.GetUserId();
 
 
 
@@ -92,6 +100,7 @@ namespace ReservationProject.UI.MVC.Controllers
         }
 
         // GET: OwnerAssests/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -125,6 +134,7 @@ namespace ReservationProject.UI.MVC.Controllers
         }
 
         // GET: OwnerAssests/Delete/5
+        [Authorize(Roles = "Admin, Customer")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
@@ -140,6 +150,7 @@ namespace ReservationProject.UI.MVC.Controllers
         }
 
         // POST: OwnerAssests/Delete/5
+      
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)

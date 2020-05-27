@@ -40,7 +40,7 @@ namespace ReservationProject.UI.MVC.Controllers
 
             
             //1)
-            MailMessage msg = new MailMessage("jgunte01@gmail.com", "admin@jeremy-gunter.com", cvm.Subject, cvm.Message + "<br />Sent by " + cvm.Name + " - " + cvm.Email);
+            MailMessage msg = new MailMessage( "admin@jeremy-gunter.com", "jgunte01@gmail.com", cvm.Subject, cvm.Message + "<br />Sent by " + cvm.Name + " - " + cvm.Email);
 
             //2) 
             msg.IsBodyHtml = true;
@@ -48,8 +48,8 @@ namespace ReservationProject.UI.MVC.Controllers
 
             //3)
             SmtpClient client = new SmtpClient("mail.jeremy-gunter.com");
-            
-            client.Credentials = new NetworkCredential("admin@jeremy-gunter.com", "L@uren#01");
+            //client.Port = 8889;
+            client.Credentials = new NetworkCredential("admin@jeremy-gunter.com", "Lauren#01");
 
             //4)
             try

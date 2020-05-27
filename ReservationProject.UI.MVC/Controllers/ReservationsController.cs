@@ -7,17 +7,27 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ReservationProject.DATA.EF;
-
+using Microsoft.AspNet.Identity;
 namespace ReservationProject.UI.MVC.Controllers
 {
+    [Authorize(Roles = "Admin,Customer,Employee")]
     public class ReservationsController : Controller
     {
         private Reservation_SystemEntities db = new Reservation_SystemEntities();
 
         // GET: Reservations
+       
         public ActionResult Index()
         {
-            var reservations = db.Reservations.Include(r => r.Location).Include(r => r.OwnerAssest);
+            var reservations = db.Reservations.ToList();
+            if (User.IsInRole("Customer"))
+            {
+                string userId = User.Identity.GetUserId();
+                reservations = db.Reservations.Where(x => x.OwnerAssest.OwnerID == userId).ToList();
+            }
+            var locations = db.Locations.Include(l => l.Reservations);
+            SelectList list = new SelectList(locations, "LocationID", "City");
+            ViewBag.cityName = list;
             return View(reservations.ToList());
         }
 
@@ -37,11 +47,17 @@ namespace ReservationProject.UI.MVC.Controllers
         }
 
         // GET: Reservations/Create
+      
         public ActionResult Create()
         {
+            string loggedUser = User.Identity.GetUserId();
+
+            var ownerPet = db.OwnerAssests.Where(r => r.OwnerID == loggedUser);
+          
+
             ViewBag.LocationID = new SelectList(db.Locations, "LocationID", "City", "ReservationMax");
 
-            ViewBag.OwnerAssetID = new SelectList(db.OwnerAssests, "OwnerAssetID", "AssetName");
+            ViewBag.OwnerAssetID = new SelectList(ownerPet, "OwnerAssetID", "AssetName");
             return View();
         }
 

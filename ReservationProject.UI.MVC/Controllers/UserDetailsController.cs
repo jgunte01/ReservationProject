@@ -10,6 +10,7 @@ using ReservationProject.DATA.EF;
 
 namespace ReservationProject.UI.MVC.Controllers
 {
+    [Authorize]
     public class UserDetailsController : Controller
     {
         private Reservation_SystemEntities db = new Reservation_SystemEntities();

@@ -28,37 +28,48 @@
             @Html.DisplayNameFor(model => model.DateAdded)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.UserDetail.UserID)
+            @Html.DisplayNameFor(model => model.UserDetail.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UserDetail.LastName)
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.AssetName)
-        </td>
-        <td>
-           <img src="~/Content/img/@item.AssetPhoto" width="100" height="100"/>
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Notes)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateAdded)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UserDetail.UserID)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.OwnerAssetID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.OwnerAssetID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.OwnerAssetID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.AssetName)
+            </td>
+            <td>
+                <img src="~/Content/img/@item.AssetPhoto" width="100" height="100" />
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Notes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateAdded)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserDetail.FirstName)
+            </td>
+            <td>
+            @Html.DisplayFor(modelItem => item.UserDetail.LastName)
+            </td>
+            <td>
+
+
+                @Html.ActionLink("Edit", "Edit", new { id = item.OwnerAssetID }) |
+                @if (User.IsInRole("Admin"))
+                {
+                    @Html.ActionLink("Details", "Details", new { id = item.OwnerAssetID })}|
+                @*@Html.ActionLink("Delete", "Delete", new { id=item.OwnerAssetID })*@
+            </td>
+        </tr>
+    }
 
 </table>

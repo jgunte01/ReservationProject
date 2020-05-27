@@ -36,6 +36,7 @@ namespace ReservationProject.UI.MVC.Controllers
         }
 
         // GET: Locations/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
